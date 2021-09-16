@@ -11,13 +11,13 @@ for clade_folder, clade_name in zip(gisaid_file, clade_names):
     protein_file = glob.glob('{}/*'.format(clade_folder))
     for graph_file in protein_file:
         if protein_file[2] == graph_file or protein_file[9] == graph_file or protein_file[13] == graph_file or protein_file[18] == graph_file:
-            if protein_file[2] == graph_file: #if the file is the file of N protein
+            if protein_file[2] == graph_file: #if the file is N protein
                 protein_name = protein_names[0]
-            elif protein_file[9] == graph_file: #if the file is the file of NS9c protein
+            elif protein_file[9] == graph_file: #if the file is NS9c
                 protein_name = protein_names[1]
             elif protein_file[13] == graph_file:
                 protein_name = protein_names[2]
-            elif protein_file[18] == graph_file: #if the file is the file of NSP2 protein
+            elif protein_file[18] == graph_file: #if the file is NSP2
                 protein_name = protein_names[3]  
 
             df = pd.read_csv(graph_file)
