@@ -2,6 +2,7 @@ from collections import Counter
 import pandas as pd
 import glob
 import os
+import re
 
 wd = "path to the folder to put files"
 clade = ["G", "GR", "GH", "GV", "L", "O", "S", "V"]
@@ -19,13 +20,14 @@ try:
 except:
     pass
 
-gisaid_file = glob.glob("path to the directory which includes aligned sequence")
-#open each file in the directory
-for clade_file, clade_name in zip(gisaid_file, clade):
-    protein_file = glob.glob('{}/*'.format(clade_file))
-    for sep_file, protein_name in zip(protein_file, protein):
+#function to count the amino acids in each position
+def make_freq_file():
+    gisaid_file = glob.glob("path to the directory which includes aligned sequence")
 
-        #Count the number of amino acids in each position
+    #Count the number of amino acids in each position
+    for sep_file in gisaid_file:
+        protein_name = re.split('[/_.]', sep_file)[-2]
+        clade_name = re.split('[/_.]', sep_file)[-3]
         f = open(sep_file)
         len_seq = []
         seq = {}
@@ -72,5 +74,21 @@ for clade_file, clade_name in zip(gisaid_file, clade):
                 i += 2
         df = df.drop('frequency', axis=1)
 
-        df.to_csv("path to the csv file created")
+        df.to_csv("path to the directory where you want to put the file/{}_{}.csv".format(clade_name, protein_name))
         f.close()
+
+#function to check the positions that the most frequent amino acids are different
+def check_most_freq():
+    freq_files = glob.glob("The directory where you put the csv files")
+    for freq_file in freq_files:
+        protein_name = re.split('[/_.]', freq_file)[-2]
+        df = pd.read_csv('{}'.format(freq_file))
+    
+        df2 = df[~(df['L'] == df['S']) | ~(df['S'] == df['V']) | ~(df['V'] == df['O']) | ~(df['O'] == df['G']) | ~(df['G'] == df['GH']) | ~(df['GH'] == df['GR']) | ~(df['GR'] == df['GV'])]
+        if len(df2.index) == 0:
+            pass
+        else:
+            df2.to_csv('path to the directory you want to put the files/{}.csv'.format(protein_name), index=False)
+
+make_freq_file()
+check_most_freq()
